@@ -125,7 +125,7 @@ function formatError(error: any, fallback?: string): string {
   return fallback || 'An unkown error occurred';
 }
 
-const Pie = () => {
+const PiePage = () => {
   const [error, setError] = useState<null | string>(null);
   const [queryData, setQueryData] = useState<null | QueryData>(null);
 
@@ -136,7 +136,6 @@ const Pie = () => {
     try {
       const decoded = atob(query);
       const parsed = JSON.parse(decoded) as QueryData;
-      console.log(parsed)
       setQueryData(parsed);
     } catch (e) {
       const err = formatError(e);
@@ -154,6 +153,6 @@ const Pie = () => {
   );
 };
 
-export default Pie;
+export default PiePage;
 
 

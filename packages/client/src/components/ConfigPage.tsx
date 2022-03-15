@@ -27,7 +27,7 @@ async function imageDownloader(url: string) {
 }
 
 
-const Config = () => {
+const ConfigPage = () => {
   const [slices, setSlices] = useState<SliceMap>({});
   const numSlices = Object.keys(slices).length;
   const totalPercent = Object.values(slices).reduce(
@@ -96,6 +96,6 @@ const Config = () => {
   );
 };
 
-export default Config;
+export default ConfigPage;
 
 

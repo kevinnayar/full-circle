@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { SliceMap } from './Slice';
-import Config from './Config';
-import Pie from './Pie';
+import ConfigPage from './ConfigPage';
+import PiePage from './PiePage';
 
 export type QueryData = {
   size: number;
@@ -16,8 +16,8 @@ const App = () => {
   return (
     <div className="app">
       <Routes>
-        <Route path="/config" element={<Config />} />
-        <Route path="/pie" element={<Pie />} />
+        <Route path="/config" element={<ConfigPage />} />
+        <Route path="/pie" element={<PiePage />} />
         <Route path="/" element={<Navigate replace to="/config" />} />
       </Routes>
     </div>
