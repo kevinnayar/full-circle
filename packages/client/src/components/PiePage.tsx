@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SliceType } from './Slice';
-import { QueryData } from './App';
+import { QueryData } from '../App';
 
 type Point = [number, number]; // [x, y]
 

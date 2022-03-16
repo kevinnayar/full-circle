@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { v4 } from 'uuid';
 import { SliceType, SliceMap, Slice } from './Slice';
 import { IconButton, SubmitButton } from './Buttons';
-import { QueryData } from './App';
+import { QueryData } from '../App';
 
 function getGuid(prefix: string): string {
   return `${prefix}_${v4()}`;
@@ -25,7 +25,6 @@ async function imageDownloader(url: string) {
   document.body.appendChild(link);
   link.click();
 }
-
 
 const ConfigPage = () => {
   const [slices, setSlices] = useState<SliceMap>({});

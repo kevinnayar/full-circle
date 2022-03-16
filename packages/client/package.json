@@ -4,10 +4,14 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@nivo/bar": "^0.79.1",
+    "@nivo/line": "^0.79.1",
+    "@nivo/pie": "^0.79.1",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.1",
     "react-router-dom": "^6.2.2",
+    "recharts": "^2.1.9",
     "sass": "^1.49.9",
     "uuid": "^8.3.2"
   },
