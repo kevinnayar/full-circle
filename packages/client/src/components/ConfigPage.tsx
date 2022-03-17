@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { v4 } from 'uuid';
 import { SliceType, SliceMap, Slice } from './Slice';
-import { IconButton, SubmitButton } from './Buttons';
+import { IconButton, SubmitButton } from './Buttons/Buttons';
 import { QueryData } from '../App';
 
 function getGuid(prefix: string): string {

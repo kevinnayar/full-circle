@@ -22,5 +22,3 @@ export const SubmitButton = ({ children, disabled, onClick }: SubmitButtonProps)
     {children}
   </button>
 );
-
-

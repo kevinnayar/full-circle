@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { InputText, InputColor, InputNumber } from './Inputs';
-import { IconButton } from './Buttons';
+import { InputText, InputColor, InputNumber } from './Inputs/Inputs';
+import { IconButton } from './Buttons/Buttons';
 
 export type SliceType = [string, string, number]; // [label, color, percentage]
 
