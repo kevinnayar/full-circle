@@ -24,17 +24,10 @@ const ChartPage = () => {
     }
   }, [query]);
 
-  if (error) {
-    return (
-      <div className="page page--chart">
-        <p className="error">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="page page--chart">
-      {queryData && <QueryChart {...queryData} />}
+      {error && <p className="error">{error}</p>}
+      {!error && queryData && <QueryChart {...queryData} />}
     </div>
   );
 };

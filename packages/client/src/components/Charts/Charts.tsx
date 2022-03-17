@@ -75,7 +75,7 @@ const QueryBarChart = ({ data, keys, colorToKeyMap, width, height, gap }: QueryC
       <YAxis />
       <Legend />
       {keys.map((key) => (
-        <Bar key={key} dataKey={key} fill={colorToKeyMap[key]} />
+        <Bar key={key} dataKey={key} fill={colorToKeyMap[key]} isAnimationActive={false} />
       ))}
     </BarChart>
   );
@@ -109,6 +109,7 @@ const QueryAreaChart = ({ data, keys, colorToKeyMap, width, height, gap }: Query
           stroke={colorToKeyMap[key]}
           fillOpacity={1}
           fill={`url(#color_${key})`}
+          isAnimationActive={false}
         />
       ))}
     </AreaChart>
@@ -128,7 +129,7 @@ const QueryLineChart = ({ data, keys, colorToKeyMap, width, height, gap }: Query
       <YAxis />
       <Legend />
       {keys.map((key) => (
-        <Line key={key} dataKey={key} fill={colorToKeyMap[key]} />
+        <Line key={key} dataKey={key} fill={colorToKeyMap[key]} isAnimationActive={false} />
       ))}
     </LineChart>
   );
@@ -149,6 +150,7 @@ const QueryPieChart = ({ data, colorToKeyMap, width, height, gap }: QueryChartPr
         cy="50%"
         outerRadius={(width - gap) / 3}
         fill="black"
+        isAnimationActive={false}
       >
         {data.map((d) => (
           <Cell key={d.name} fill={colorToKeyMap[d.name]} />
@@ -196,7 +198,7 @@ export const QueryChart = ({ config, chart }: QueryData) => {
   };
 
   return (
-    <div style={{ margin: gap, background, width, height }}>
+    <div id="chart" style={{ margin: gap, background, width, height }}>
       {type === 'bar' && <QueryBarChart {...props} />}
       {type === 'area' && <QueryAreaChart {...props} />}
       {type === 'line' && <QueryLineChart {...props} />}

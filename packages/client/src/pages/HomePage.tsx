@@ -7,11 +7,31 @@ import {
   ChartTypePortionData,
   QueryData,
 } from '../components/Charts/Charts';
-import { SubmitButton } from '../components/Buttons/Buttons';
+import { SubmitButton, LinkButton } from '../components/Buttons/Buttons';
 import { InputNumber } from '../components/Inputs/Inputs';
 
+async function imageDownloader(url: string) {
+  if (!window || !document) {
+    throw new Error('Access to document is required for download');
+  }
+
+  const file = await fetch(url);
+  const buffer = await file.arrayBuffer();
+  const downloadUrl = window.URL.createObjectURL(new Blob([buffer]));
+
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.setAttribute('download', 'image.png');
+
+  document.body.appendChild(link);
+  link.click();
+}
+
 const HomePage = () => {
-  const [urls, setUrls] = useState<[string, string]>(['', '']);
+  const [urls, setUrls] = useState<{ client: string, server: string }>({
+    client: '',
+    server: '',
+  });
 
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
     mode: 'light',
@@ -42,14 +62,18 @@ const HomePage = () => {
   const setGraphDataAsString = (e: any) => setDataAsString(e.target.value);
   const setPortionDataAsString = (e: any) => setDataAsString(e.target.value);
 
-  const setChartGraphDataFromString = () => {
+  const setChartGraphDataFromString = (e: any) => {
     const parsed = JSON.parse(dataAsString) as ChartTypeGraphData[];
     setChartGraphData(parsed);
+    // @ts-ignore
+    setQueryChartData({ ...queryChartData, data: parsed });
   };
 
-  const setChartPortionDataFromString = () => {
+  const setChartPortionDataFromString = (e: any) => {
     const parsed = JSON.parse(dataAsString) as ChartTypePortionData[];
     setChartPortionData(parsed);
+    // @ts-ignore
+    setQueryChartData({ ...queryChartData, data: parsed });
   };
 
   React.useEffect(() => {
@@ -59,32 +83,23 @@ const HomePage = () => {
     };
     const stringified = JSON.stringify(queryData);
     const encoded = btoa(stringified);
-    const serverUrl = `${process.env.API_URL}/api/v1/circle?query=${encoded}`;
-    const clientUrl = `http://localhost:1234/chart?query=${encoded}`;
-    setUrls([clientUrl, serverUrl]);
+    const newUrls = {
+      client: `http://localhost:1234/chart?query=${encoded}`,
+      server: `${process.env.API_URL}/api/v1/chart?query=${encoded}`,
+    };
+    setUrls(newUrls);
   }, [queryConfig, queryChartData]);
 
-  // const onSubmit = async () => {
-  //   if (totalPercent === 100) {
-  //     const queryData: QueryData = {
-  //       size: 400,
-  //       color: '#ccc',
-  //       strokeWidth: 10,
-  //       mode: 'light',
-  //       slices,
-  //     };
-  //     const stringified = JSON.stringify(queryData);
-  //     const encoded = btoa(stringified);
-  //     const url = `${process.env.API_URL}/api/v1/circle?query=${encoded}`;
-  //     console.log(`http://localhost:1234/pie?query=${encoded}`);
-  //     await imageDownloader(url);
-  //   }
-  // };
+  const onSubmit = async () => {
+    if (urls.server) {
+      await imageDownloader(urls.server);
+    }
+  };
 
-  const textOnChange = queryChartData.type === 'pie'
+  const onChangeTextarea = queryChartData.type === 'pie'
     ? setPortionDataAsString
     : setGraphDataAsString;
-  const textOnBlur = queryChartData.type === 'pie'
+  const onBlurTextarea = queryChartData.type === 'pie'
     ? setChartPortionDataFromString
     : setChartGraphDataFromString;
 
@@ -126,9 +141,7 @@ const HomePage = () => {
           </div>
           <div className="content__section">
             <h2>Enter data</h2>
-            <textarea rows={20} onChange={textOnChange} onBlur={textOnBlur}>
-              {dataAsString}
-            </textarea>
+            <textarea rows={20} value={dataAsString} onChange={onChangeTextarea} onBlur={onBlurTextarea} />
           </div>
         </div>
         <div className="content__previews">
@@ -141,14 +154,9 @@ const HomePage = () => {
             <pre>{JSON.stringify(queryChartData, null, 2)}</pre>
           </div>
           <div className="content__preview">
-            <a href={urls[0]} target="_blank">
-              Client
-            </a>
-          </div>
-          <div className="content__preview">
-            <a href={urls[1]} target="_blank">
-              Server
-            </a>
+            <SubmitButton onClick={onSubmit}>Download</SubmitButton>
+            <LinkButton href={urls.client} external>Client</LinkButton>
+            <LinkButton href={urls.server} external>Server</LinkButton>
           </div>
         </div>
       </div>

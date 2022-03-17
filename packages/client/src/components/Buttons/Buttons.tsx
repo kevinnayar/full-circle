@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-type IconButtonProps ={
+type IconButtonProps = {
   icon: string,
   onClick: () => void;
 };
@@ -22,3 +22,23 @@ export const SubmitButton = ({ children, disabled, onClick }: SubmitButtonProps)
     {children}
   </button>
 );
+
+type LinkButtonProps = {
+  children: any;
+  href: string;
+  external?: boolean;
+};
+
+export const LinkButton = ({ children, href, external }: LinkButtonProps) => {
+  const props = {
+    href,
+    ...(external ? { target: '_blank' } : {}),
+  };
+  return (
+    <a className="btn btn--link" {...props}>
+      {children}
+    </a>
+  );
+};
+
+

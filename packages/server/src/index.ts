@@ -34,7 +34,7 @@ function formatError(error: any, fallback?: string): string {
   return fallback || 'An unkown error occurred';
 }
 
-async function getCircle(req: Request, res: Response) {
+async function getChart(req: Request, res: Response) {
   try {
     const query = req.query.query;
     if (!query) {
@@ -44,13 +44,13 @@ async function getCircle(req: Request, res: Response) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    const url = `${config.baseUrl}:${config.clientPort}/pie?query=${query}`;
+    const url = `${config.baseUrl}:${config.clientPort}/chart?query=${query}`;
 
     await page.goto(url);
-    await page.waitForSelector('.page > .svg-wrapper');
+    await page.waitForSelector('.page > #chart');
 
-    const image = await page.$('.page > .svg-wrapper');
-    const imageName = 'pie-chart.png';
+    const image = await page.$('.page > #chart');
+    const imageName = 'chart.png';
     const imagePath = path.resolve(__dirname, `../public/${imageName}`);
 
     await image.screenshot({
@@ -68,7 +68,7 @@ async function getCircle(req: Request, res: Response) {
   }
 }
 
-app.get('/api/v1/circle', getCircle);
+app.get('/api/v1/chart', getChart);
 
 app.listen(config.apiPort, () => {
   console.log(`api server running at ${config.baseUrl}:${config.apiPort}`);
