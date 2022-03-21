@@ -13,7 +13,7 @@ const ChartPage = () => {
 
   useEffect(() => {
     try {
-      const decoded = atob(query);
+      const decoded = window.atob(query);
       const parsed = JSON.parse(decoded) as QueryData;
       if (!parsed.chart.data.length) {
         throw new Error('Data cannot be empty!');

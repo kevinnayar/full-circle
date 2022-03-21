@@ -62,18 +62,19 @@ const HomePage = () => {
   const setGraphDataAsString = (e: any) => setDataAsString(e.target.value);
   const setPortionDataAsString = (e: any) => setDataAsString(e.target.value);
 
-  const setChartGraphDataFromString = (e: any) => {
-    const parsed = JSON.parse(dataAsString) as ChartTypeGraphData[];
-    setChartGraphData(parsed);
-    // @ts-ignore
-    setQueryChartData({ ...queryChartData, data: parsed });
+  const setChartGraphDataFromString = () => {
+    const data = JSON.parse(dataAsString) as ChartTypeGraphData[];
+    setChartGraphData(data);
+    const type = queryChartData.type !== 'pie'
+      ? 'bar'
+      : queryChartData.type as 'bar' | 'area' | 'line';
+    setQueryChartData({ type, data });
   };
 
-  const setChartPortionDataFromString = (e: any) => {
-    const parsed = JSON.parse(dataAsString) as ChartTypePortionData[];
-    setChartPortionData(parsed);
-    // @ts-ignore
-    setQueryChartData({ ...queryChartData, data: parsed });
+  const setChartPortionDataFromString = () => {
+    const data = JSON.parse(dataAsString) as ChartTypePortionData[];
+    setChartPortionData(data);
+    setQueryChartData({ type: 'pie', data });
   };
 
   React.useEffect(() => {
@@ -82,23 +83,22 @@ const HomePage = () => {
       chart: queryChartData,
     };
     const stringified = JSON.stringify(queryData);
-    const encoded = btoa(stringified);
+    const query = window.btoa(stringified);
     const newUrls = {
-      client: `http://localhost:1234/chart?query=${encoded}`,
-      server: `${process.env.API_URL}/api/v1/chart?query=${encoded}`,
+      client: `http://localhost:1234/chart?query=${query}`,
+      server: `${process.env.API_URL}/api/v1/chart?query=${query}`,
     };
     setUrls(newUrls);
   }, [queryConfig, queryChartData]);
 
   const onSubmit = async () => {
-    if (urls.server) {
-      await imageDownloader(urls.server);
-    }
+    if (urls.server) await imageDownloader(urls.server);
   };
 
   const onChangeTextarea = queryChartData.type === 'pie'
     ? setPortionDataAsString
     : setGraphDataAsString;
+
   const onBlurTextarea = queryChartData.type === 'pie'
     ? setChartPortionDataFromString
     : setChartGraphDataFromString;
