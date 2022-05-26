@@ -28,10 +28,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 app.use(cors(corsOptions));
 
-function formatError(error: any, fallback?: string): string {
+function formatError(error: any): string {
   if (typeof error === 'object' && 'message' in error) return error.message.toString();
   if (typeof error === 'string') return error;
-  return fallback || 'An unkown error occurred';
+  return 'An unkown error occurred';
 }
 
 async function getChart(req: Request, res: Response) {
@@ -53,9 +53,7 @@ async function getChart(req: Request, res: Response) {
     const imageName = 'chart.png';
     const imagePath = path.resolve(__dirname, `../public/${imageName}`);
 
-    await image.screenshot({
-      path: imagePath,
-    });
+    await image.screenshot({ path: imagePath });
 
     await page.close();
     await browser.close();

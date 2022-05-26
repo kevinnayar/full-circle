@@ -14,7 +14,6 @@ import {
   PieChart,
   Cell,
 } from 'recharts';
-import { formatError } from '../../utils/baseUtils';
 import {
   getRandomDarkColor,
   getRandomLightColor,
