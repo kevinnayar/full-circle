@@ -14,11 +14,17 @@ const ChartPage = () => {
 
   useEffect(() => {
     try {
+      if (!query) {
+        throw new Error('No query provided!');
+      }
+
       const decoded = window.atob(query);
       const parsed = JSON.parse(decoded) as QueryData;
+
       if (!parsed.chart.data.length) {
         throw new Error('Data cannot be empty!');
       }
+
       setQueryData(parsed);
     } catch (e) {
       setError(formatError(e));
