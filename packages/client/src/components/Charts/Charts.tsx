@@ -20,9 +20,11 @@ import {
   getLightBgColor,
   getDarkBgColor,
 } from '../../utils/colorUtils';
-
-export type ChartTypeGraphData = Record<'name', string> & Record<string, number>;
-export type ChartTypePortionData = Record<'name', string> & Record<'value', number>;
+import {
+  ChartTypeGraphData,
+  ChartTypePortionData,
+  QueryData,
+} from '../../types/baseTypes'
 
 function isPortionDataList(data: ChartTypeGraphData[] | ChartTypePortionData[]): boolean {
   for (let i = 0; i < data.length; i += 1) {
@@ -35,22 +37,6 @@ function isPortionDataList(data: ChartTypeGraphData[] | ChartTypePortionData[]):
   }
   return true;
 }
-
-export type QueryChartData =
-  | {
-      type: 'bar' | 'area' | 'line';
-      data: ChartTypeGraphData[];
-    }
-  | {
-      type: 'pie';
-      data: ChartTypePortionData[];
-    };
-
-export type QueryConfig = {
-  mode: 'light' | 'dark';
-  width: number;
-  height: number;
-};
 
 type QueryChartProps = {
   data: ChartTypeGraphData[] | ChartTypePortionData[];
@@ -158,11 +144,6 @@ const QueryPieChart = ({ data, colorToKeyMap, width, height, gap }: QueryChartPr
       <Legend />
     </PieChart>
   );
-};
-
-export type QueryData = {
-  config: QueryConfig;
-  chart: QueryChartData;
 };
 
 export const QueryChart = ({ config, chart }: QueryData) => {

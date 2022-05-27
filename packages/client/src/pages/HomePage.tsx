@@ -6,7 +6,7 @@ import {
   ChartTypeGraphData,
   ChartTypePortionData,
   QueryData,
-} from '../components/Charts/Charts';
+} from '../types/baseTypes';
 import { SubmitButton, LinkButton } from '../components/Buttons/Buttons';
 import { InputNumber } from '../components/Inputs/Inputs';
 
@@ -39,13 +39,19 @@ const HomePage = () => {
     height: 500,
   });
 
-  const [dataAsString, setDataAsString] = useState<string>('');
-  const [chartGraphData, setChartGraphData] = useState<ChartTypeGraphData[]>([]);
-  const [chartPortionData, setChartPortionData] = useState<ChartTypePortionData[]>([]);
+  const initPortionData: ChartTypePortionData[] = [
+    { name: 'foo', value: 25 },
+    { name: 'bar', value: 35 },
+    { name: 'baz', value: 27 },
+    { name: 'bat', value: 13 },
+  ]
 
+  const [chartGraphData, setChartGraphData] = useState<ChartTypeGraphData[]>([]);
+  const [chartPortionData, setChartPortionData] = useState<ChartTypePortionData[]>(initPortionData);
+  const [dataAsString, setDataAsString] = useState<string>(JSON.stringify(initPortionData));
   const [queryChartData, setQueryChartData] = useState<QueryChartData>({
-    type: 'bar',
-    data: chartGraphData,
+    type: 'pie',
+    data: chartPortionData,
   });
 
   const setModeLight = () => setQueryConfig({ ...queryConfig, mode: 'light' });
@@ -85,7 +91,7 @@ const HomePage = () => {
     const stringified = JSON.stringify(queryData);
     const query = window.btoa(stringified);
     const newUrls = {
-      client: `http://localhost:1234/chart?query=${query}`,
+      client: `${process.env.CLIENT_URL}/chart?query=${query}`,
       server: `${process.env.API_URL}/api/v1/chart?query=${query}`,
     };
     setUrls(newUrls);
@@ -106,17 +112,17 @@ const HomePage = () => {
   return (
     <div className="page page--home">
       <header className="header">
-        <h1>configure a custom chart</h1>
+        <h1>Custom Chart Generator</h1>
       </header>
       <div className="content">
         <div className="content__sections">
           <div className="content__section">
-            <h2>Select mode</h2>
+            <h2>Mode</h2>
             <SubmitButton onClick={setModeLight}>Light</SubmitButton>
             <SubmitButton onClick={setModeDark}>Dark</SubmitButton>
           </div>
           <div className="content__section">
-            <h2>Select dimensions</h2>
+            <h2>Dimensions</h2>
             <InputNumber
               label="Width"
               value={queryConfig.width}
@@ -133,14 +139,14 @@ const HomePage = () => {
             />
           </div>
           <div className="content__section">
-            <h2>Select chart type</h2>
+            <h2>Chart type</h2>
             <SubmitButton onClick={setChartBar}>Bar</SubmitButton>
             <SubmitButton onClick={setChartArea}>Area</SubmitButton>
             <SubmitButton onClick={setChartLine}>Line</SubmitButton>
             <SubmitButton onClick={setChartPie}>Pie</SubmitButton>
           </div>
           <div className="content__section">
-            <h2>Enter data</h2>
+            <h2>Chart data</h2>
             <textarea rows={20} value={dataAsString} onChange={onChangeTextarea} onBlur={onBlurTextarea} />
           </div>
         </div>
@@ -156,7 +162,6 @@ const HomePage = () => {
           <div className="content__preview">
             <SubmitButton onClick={onSubmit}>Download</SubmitButton>
             <LinkButton href={urls.client} external>Client</LinkButton>
-            <LinkButton href={urls.server} external>Server</LinkButton>
           </div>
         </div>
       </div>
