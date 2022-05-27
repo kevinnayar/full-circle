@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   QueryConfig,
   QueryChartData,
@@ -83,7 +83,7 @@ const HomePage = () => {
     setQueryChartData({ type: 'pie', data });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const queryData: QueryData = {
       config: queryConfig,
       chart: queryChartData,

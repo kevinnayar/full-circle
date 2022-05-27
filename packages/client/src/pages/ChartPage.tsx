@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { formatError } from '../utils/baseUtils';
-import { QueryChart, QueryData } from '../components/Charts/Charts';
+import { QueryChart } from '../components/Charts/Charts';
+import { QueryData } from '../types/baseTypes'
 
 const ChartPage = () => {
   const [searchParams] = useSearchParams();
