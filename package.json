@@ -14,6 +14,6 @@
   },
   "scripts": {
     "start:client": "API_URL=http://localhost:8080 CLIENT_URL=http://localhost:1234 parcel ./packages/client/public/index.html --dist-dir packages/client/dist",
-    "start:server": "nodemon --watch ./packages/server -e ts --exec npx ts-node ./packages/server/src/index.ts"
+    "start:server": "API_URL=http://localhost:8080 CLIENT_URL=http://localhost:1234 nodemon --watch ./packages/server -e ts --exec npx ts-node ./packages/server/src/index.ts"
   }
 }
