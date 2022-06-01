@@ -1,9 +1,14 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
+import crypto  from 'crypto';
 import puppeteer, { Browser } from 'puppeteer';
+import Logger from './logger';
 
 async function main() {
+  const logger = new Logger('ApiServer');
+  const imageCache: Record<string, 1> = {};
+
   const allowedDomains: string[] = [process.env.CLIENT_URL];
   const apiPort = process.env.API_URL.split(':')[2];
 
@@ -32,27 +37,42 @@ async function main() {
 
   async function getChart(req: Request, res: Response) {
     try {
-      const start = Date.now();
+      const { timerEnd } = logger.timer('get chart');
 
-      const query = req.query.query;
-      if (!query) {
+      const query = req.query.query as string;
+      if (!query || typeof query !== 'string') {
         throw new Error('Query is required');
       }
-
-      const page = await browser.newPage();
-
-      const url = `${process.env.CLIENT_URL}/chart?query=${query}`;
-
-      await page.goto(url);
-      await page.waitForSelector('.page > #chart');
-
-      const image = await page.$('.page > #chart');
-      const imageName = 'chart.png';
-      const imagePath = path.resolve(__dirname, `../public/${imageName}`);
-
-      await image.screenshot({ path: imagePath });
-      await page.close();
       
+      const hash = crypto.createHash('sha256').update(query).digest('hex');
+      const imageName = `${hash}.png`;
+      let imagePath;
+
+      if (imageCache[imageName]) {
+        imagePath = path.resolve(__dirname, `../public/${imageName}`);
+        timerEnd('via cache');
+      } else {
+        const page = await browser.newPage();
+        const url = `${process.env.CLIENT_URL}/chart?query=${query}`;
+
+        await page.goto(url);
+        await page.waitForSelector('.page > #chart');
+
+        const image = await page.$('.page > #chart');
+        imagePath = path.resolve(__dirname, `../public/${imageName}`);
+
+        await image.screenshot({ path: imagePath });
+        await page.close();
+
+        timerEnd('via puppeteer');
+      }
+
+      if (!imagePath) {
+        throw new Error('Could not save image');
+      }
+
+      imageCache[imageName] = 1;
+
       res.setHeader('Content-type', 'image/png');
       res.sendFile(imagePath);
     } catch (e) {
@@ -67,7 +87,7 @@ async function main() {
   app.get('/api/v1/chart', getChart);
 
   app.listen(apiPort, () => {
-    console.log(`api server running at ${process.env.API_URL}`);
+    logger.info(`api server running at ${process.env.API_URL}`);
   });
 }
 

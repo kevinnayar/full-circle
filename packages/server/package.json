@@ -4,9 +4,11 @@
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
+    "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "eslint": "^8.6.0",

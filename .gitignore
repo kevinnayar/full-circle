@@ -20,3 +20,4 @@ yarn-debug.log*
 yarn-error.log*
 node_modules/
 **/public/script.js
+packages/server/public/
