@@ -60,6 +60,7 @@ export default class Logger {
       const messages = extra ? [`${operation} -> ${extra}`, diff] : [operation, diff];
       console.log(...this.label('info'), this.namespace, ...messages);
     };
+
     return {
       beganAt,
       timerEnd,
