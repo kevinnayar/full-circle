@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
 import crypto  from 'crypto';
+import workerpool from 'workerpool';
 import puppeteer, { Browser } from 'puppeteer';
 import Logger from './utils/logger';
 import Cache from './utils/cache';
@@ -28,6 +29,7 @@ async function main() {
   };
 
   const app = express();
+  const pool = workerpool.pool();
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -90,7 +92,72 @@ async function main() {
     }
   }
 
+  async function getZipsToStates(req: Request, res: Response) {
+    const page = await browser.newPage();
+    const url = 'https://en.wikipedia.org/wiki/List_of_ZIP_Code_prefixes';
+
+    await page.goto(url);
+    await page.waitForSelector('#mw-content-text table');
+
+    const data = await page.evaluate(() => {
+      const elems = Array.from(document.querySelectorAll('#mw-content-text table tr td > b'));
+      const zips = [];
+
+      for (const elem of elems) {
+        const text = elem.textContent;
+        if (text) {
+          const [zip, state] = text.split(' ');
+          if (state) {
+            const abbr = state.slice(0, 2);
+            zips.push([zip, abbr]);
+          }
+        }
+      }
+      return zips;
+    });
+
+    for (const [zip, abbr] of data) {
+      console.log(zip, abbr);
+    }
+  }
+
+  async function slowCalc() {
+    return new Promise((resolve) => {
+      let counter = 0;
+      for (let i = 0; i < 9_000_000_000; i += 1) {
+        counter += 1;
+      }
+      resolve(counter);
+    })
+  }
+
+  async function slowRequest(req: Request, res: Response) {
+    const start = Date.now();
+    logger.info({ message: 'slow:begin', start })
+    // const result = await slowCalc();
+
+    pool.exec(slowCalc)
+      .then(result => res.status(200).send({ type: 'slow', result }))
+      .catch(err => logger.error(err))
+      .then(() => pool.terminate());
+
+    logger.info({ message: 'slow:end', now: Date.now(), end: `${Date.now() - start}` })
+    // return res.status(200).send({ type: 'slow', result });
+  }
+  
+  async function fastRequest(req: Request, res: Response) {
+    const start = Date.now();
+    logger.info({ message: 'fast:begin', start })
+    const result = 0;
+    logger.info({ message: 'fast:end', now: Date.now(), end: `${Date.now() - start}` })
+    return res.status(200).send({ type: 'fast', result });
+  }
+
+
   app.get('/api/v1/chart', requestLogger, getChart);
+  app.get('/api/v1/zips-to-states', requestLogger, getZipsToStates);
+  app.get('/api/v1/slow', requestLogger, slowRequest);
+  app.get('/api/v1/fast', requestLogger, fastRequest);
 
   app.listen(apiPort, () => {
     logger.info(`api server running at ${process.env.API_URL}`);
